@@ -474,8 +474,16 @@ GROUP BY p.id;
 
 -- LEFT JOIN & RIGHT JOIN
 -- 1
+SELECT d.nombre AS departamento, p.apellido1, p.apellido2, p.nombre FROM profesor pr
+LEFT JOIN departamento d ON d.id = pr.id_departamento
+RIGHT JOIN persona p ON p.id = pr.id_profesor
+ORDER BY d.nombre, p.apellido1, p.nombre;
 
 -- 2
+SELECT d.nombre AS departamento, p.apellido1, p.apellido2, p.nombre FROM profesor pr
+LEFT JOIN departamento d ON pr.id_departamento IS NULL
+RIGHT JOIN persona p ON p.id = pr.id_profesor
+ORDER BY d.nombre, p.apellido1, p.nombre;
 
 -- 3
 
