@@ -485,22 +485,41 @@ LEFT JOIN departamento d ON pr.id_departamento IS NULL
 RIGHT JOIN persona p ON p.id = pr.id_profesor
 ORDER BY d.nombre, p.apellido1, p.nombre;
 
--- 3
+-- 3 //// ESTE CREO QUE ESTA MAL PERO NO IMAGINO LA SOLUCION EXACTA
+SELECT d.id, d.nombre AS departamento FROM departamento d
+LEFT OUTER JOIN profesor pr ON pr.id_departamento = d.id;
+
 
 -- 4
+SELECT pr.id_profesor, p.* FROM asignatura a
+LEFT JOIN persona p on p.id = a.id_profesor
+LEFT OUTER JOIN profesor pr ON pr.id_profesor = a.id_profesor
+GROUP BY p.id;
 
--- 5
+-- 5 /// no he encontrado la forma de hacer este sin el WHERE
+SELECT a.* from asignatura a
+LEFT JOIN profesor pr on a.id_profesor = pr.id_profesor 
+WHERE pr.id_profesor IS NULL;
+-- 6 /// no he encontrado la forma de hacer este sin el WHERE
 
--- 6
+SELECT d.*, pr.id_profesor from departamento d 
+LEFT JOIN profesor pr on pr.id_departamento = d.id
+LEFT JOIN asignatura a on a.id_profesor = pr.id_profesor
+WHERE pr.id_profesor is null GROUP BY d.id;
 
 -- RESUM
 -- 1
+SELECT * from persona  WHERE tipo = 'alumno';
 
 -- 2
+SELECT count(id) from persona  WHERE year(fecha_nacimiento)= 1999;
+
 
 -- 3
-
+SELECT d.nombre from departamento d  WHERE
+nombre IN(SELECT  count(id_profesor) from profesor);
 -- 4
+
 
 -- 5
 
