@@ -474,38 +474,59 @@ GROUP BY p.id;
 
 -- LEFT JOIN & RIGHT JOIN
 -- 1
-SELECT d.nombre AS departamento, p.apellido1, p.apellido2, p.nombre FROM profesor pr
-LEFT JOIN departamento d ON d.id = pr.id_departamento
-RIGHT JOIN persona p ON p.id = pr.id_profesor
-ORDER BY d.nombre, p.apellido1, p.nombre;
+SELECT d.nombre AS departamento, p.apellido1, p.apellido2, p.nombre
+FROM profesor pr
+RIGHT JOIN departamento d on d.id = pr.id_departamento
+RIGHT JOIN persona p on pr.id_profesor = p.id  
+WHERE p.tipo = 'profesor'
+group by p.id ORDER BY d.nombre;
 
--- 2
-SELECT d.nombre AS departamento, p.apellido1, p.apellido2, p.nombre FROM profesor pr
-LEFT JOIN departamento d ON pr.id_departamento IS NULL
-RIGHT JOIN persona p ON p.id = pr.id_profesor
-ORDER BY d.nombre, p.apellido1, p.nombre;
+-- 2 // todos los profesores estan asociados a un departamento
+SELECT apellido1, apellido2, nombre, tipo from persona 
+WHERE id NOT IN (SELECT id_profesor FROM profesor);
+
+SELECT p.apellido1, p.apellido2, p.nombre, p.tipo FROM  persona p 
+LEFT JOIN profesor pr on pr.id_profesor = p.id  
+WHERE pr.id_departamento NOT IN (SELECT id from departamento)
+group by p.id;
+
+select * from persona where tipo = 'profesor';
+select * from profesor order by id_profesor ;
+ 
+ -- profesores que no estan asociados al departamento 1:
+ 
+SELECT p.apellido1, p.apellido2, p.nombre, p.id FROM  persona p 
+LEFT JOIN profesor pr on pr.id_profesor = p.id
+LEFT JOIN departamento d on d.id = pr.id_departamento
+WHERE pr.id_departamento !=1;
+
 
 -- 3 //// ESTE CREO QUE ESTA MAL PERO NO IMAGINO LA SOLUCION EXACTA
-SELECT d.id, d.nombre AS departamento FROM departamento d
-LEFT OUTER JOIN profesor pr ON pr.id_departamento = d.id;
-
+SELECT d.*  FROM departamento d
+LEFT JOIN profesor pr ON pr.id_departamento = d.id
+WHERE d.id NOT IN(SELECT id_departamento from profesor)
+GROUP BY d.id
+;
 
 -- 4
-SELECT pr.id_profesor, p.* FROM asignatura a
+SELECT p.* FROM asignatura a
 LEFT JOIN persona p on p.id = a.id_profesor
 LEFT OUTER JOIN profesor pr ON pr.id_profesor = a.id_profesor
 GROUP BY p.id;
 
--- 5 /// no he encontrado la forma de hacer este sin el WHERE
-SELECT a.* from asignatura a
-LEFT JOIN profesor pr on a.id_profesor = pr.id_profesor 
-WHERE pr.id_profesor IS NULL;
--- 6 /// no he encontrado la forma de hacer este sin el WHERE
+-- 5 // NO ESTA HECHO
+select * from asignatura;
 
+SELECT a.* from asignatura a 
+LEFT JOIN profesor pr on pr.id_profesor = a.id_profesor
+RIGHT JOIN asignatura asi on asi.id_profesor = pr.id_profesor
+WHERE asi.id_profesor IS NULL;
+
+-- 6 /// no he encontrado la forma de hacer este sin el WHERE
 SELECT d.*, pr.id_profesor from departamento d 
 LEFT JOIN profesor pr on pr.id_departamento = d.id
 LEFT JOIN asignatura a on a.id_profesor = pr.id_profesor
-WHERE pr.id_profesor is null GROUP BY d.id;
+WHERE a.curso is null GROUP BY d.id;
 
 -- RESUM
 -- 1
@@ -515,23 +536,36 @@ SELECT * from persona  WHERE tipo = 'alumno';
 SELECT count(id) from persona  WHERE year(fecha_nacimiento)= 1999;
 
 
--- 3
-SELECT d.nombre from departamento d  WHERE
-nombre IN(SELECT  count(id_profesor) from profesor);
--- 4
+-- 3 	
+    
+  --  SELECT id_departamento, count(*) as num_profesores FROM profesor group by id_departamento;
+    
+	SELECT d.nombre, count(*) as num_profesores FROM profesor pr
+    LEFT JOIN departamento d on d.id = pr.id_departamento
+    group by pr.id_departamento;
 
+  
+-- 4
+	
+   -- no fet
 
 -- 5
 
+
 -- 6
+
 
 -- 7
 
+
 -- 8
+
 
 -- 9
 
+
 -- 10
+
 
 -- 11
 
