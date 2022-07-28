@@ -1,8 +1,4 @@
--- ------------------------------------------------------------------------------------------------
--- ------------------------------------------------------------------------------------------------
--- ------------------------------------------------------------------------------------------------
--- ------------------------------------------------------------------------------------------------
--- ------------------------------------------------------------------------------------------------
+-- UNIVERSIDAD
 -- ------------------------------------------------------------------------------------------------
 DROP DATABASE IF EXISTS universidad;
 CREATE DATABASE universidad CHARACTER SET utf8mb4;
@@ -394,29 +390,62 @@ SELECT count(id) from persona  WHERE year(fecha_nacimiento)= 1999;
     group by pr.id_departamento;
 
   
--- 4
-	
-   -- no fet
+-- 4 // no solucionado
+	SELECT d.nombre, count(*) as num_profesores FROM profesor pr
+    LEFT JOIN departamento d on d.id = pr.id_departamento
+    group by pr.id_departamento;
+
+	SELECT * FROM departamento 	
+    WHERE id NOT IN (SELECT id_departamento FROM profesor);
+
 
 -- 5
 
+	SELECT g.nombre, count(*) as num_asignaturas from grado g 
+    LEFT JOIN asignatura a on a.id_grado = g.id
+    GROUP BY g.id ORDER BY num_asignaturas DESC 
+	;
+     
+  select * from asignatura;
 
--- 6
+-- 6 // esta mal
+	SELECT g.nombre, count(*)  as num_asignaturas from grado g 
+    LEFT JOIN asignatura a on a.id_grado = g.id 
+    WHERE count(*)>40
+    GROUP BY g.id ORDER BY num_asignaturas DESC 
+    ;
+    
+-- 7 // esta mal
+	
+    SELECT g.nombre, a.tipo, count(a.creditos) as num_creditos from asignatura a
+    LEFT JOIN grado g  on a.id_grado = g.id
+    ORDER BY a.tipo;
 
+-- 8 // esta mal
+	select c.anyo_inicio, count( a.id_curso_escolar) as num_alumnos from alumno_se_matricula_asignatura a
+    LEFT JOIN curso_escolar c on  a.id_curso_escolar = c.id
+    ;
 
--- 7
-
-
--- 8
-
-
+	SELECT * from alumno_se_matricula_asignatura;
+    select * from curso_escolar;
 -- 9
-
+	
+    SELECT p.id,p.nombre, p.apellido1, p.apellido2, p.tipo, count(*) as num_asignaturas FROM asignatura a
+	LEFT JOIN profesor pr on pr.id_profesor = a.id_profesor
+    RIGHT JOIN persona p on p.id = pr.id_profesor
+    WHERE p.tipo = 'profesor'
+    group by p.id;
 
 -- 10
-
-
+	SELECT *  from persona where tipo = 'alumno' and fecha_nacimiento 
+    in(SELECT max(fecha_nacimiento)  from persona);
+	
+    select * from persona;
 -- 11
-
-
+	
+    SELECT * from persona p
+    LEFT JOIN profesor pr on pr.id_profesor = p.id
+    LEFT JOIN departamento d on d.id = pr.id_departamento
+    WHERE p.tipo = 'profesor' AND pr.id_profesor NOT IN (SELECT id_profesor from asignatura)
+    ORDER BY p.id;
 
